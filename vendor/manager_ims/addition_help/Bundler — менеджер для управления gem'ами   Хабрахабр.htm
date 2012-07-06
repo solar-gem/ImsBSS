@@ -1,0 +1,1370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0031)http://habrahabr.ru/post/85201/ -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+		<title>Bundler — менеджер для управления gem'ами / Хабрахабр</title>
+		<meta name="description" content="Что такое Bundler?
+Это менеджер для управления зависимостями gem&#39;ов в ruby приложениях. Эта утилита позволяет легко устанавливать необходимые gem&#39;ы для вашего приложения, при этом вовсе не...">		
+		<meta name="keywords" content="ruby, rails, bundler, manage gems">
+
+		
+		
+			<link href="http://habrahabr.ru/styles/1335600741/all.css" rel="stylesheet" media="all">
+		
+    
+		
+  <link href="http://habrahabr.ru/styles/1335600741/_parts/posts.css" rel="stylesheet" media="all">
+  <link href="http://habrahabr.ru/styles/1335600741/_parts/comments.css" rel="stylesheet" media="all">
+  <link href="http://habrahabr.ru/styles/1335600741/forms.css" rel="stylesheet" media="all">
+  <link href="http://habrahabr.ru/styles/1335600741/highlight.css" rel="stylesheet" media="all">
+  <link href="http://habrahabr.ru/styles/1335600741/posts/all.css" rel="stylesheet" media="all">
+
+
+		
+		
+			<script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/all.js"></script>
+		
+		
+		
+		
+			
+		
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/jquery.form.js"></script>
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/jquery.cookie.js"></script>
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/swfobject.js"></script>
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/wysiwyg.js"></script>
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/highlight.js"></script>
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/posts.js"></script>
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/comments.js"></script>
+  <script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/all(1).js"></script>
+
+		
+		<script type="text/javascript" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/adriver.core.2.js"></script>
+		
+		
+		
+		<link title="Хабрахабр / Комментарии к публикации «Bundler — менеджер для управления gem&#39;ами»" type="application/rss+xml" rel="alternate" href="http://habrahabr.ru/rss/post/85201/">
+		
+	<script async="true" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/ga.js"></script></head>
+
+	<body>
+	  
+
+
+
+
+
+
+	<div id="topline" title=""><div style="position: relative; height: 90px; "><table width="100%" height="90" cellspacing="0" cellpadding="0" border="0" style="line-height: 100%; margin: 0; padding: 0;"><tbody><tr><td style="width: 50%; line-height: 100%; margin: 0; padding: 0;"><a target="_blank" href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=176776&ad=299620&bid=1745669&bt=52&bn=1&pz=0&ref=http:%2f%2fhabrahabr.ru%2fpost%2f85201%2f&custom=1%3Druby&rleurl="><img width="100%" vspace="0" hspace="0" height="90" border="0" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/jsf.jpg"></a></td><td width="1000" style="background-image:url(&#39;http://masterh4.adriver.ru/images/0001745/0001745669/0/jsf.jpg&#39;); line-height: 100%; margin: 0; padding: 0;"><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=176776&ad=299620&bid=1745669&bt=52&bn=1&pz=0&ref=http:%2f%2fhabrahabr.ru%2fpost%2f85201%2f&custom=1%3Druby&rleurl=" target="_blank"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/js1.jpg" border="0" width="1000" height="90"></a></td><td style="width: 50%; line-height: 100%; margin: 0; padding: 0;"><a target="_blank" href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=176776&ad=299620&bid=1745669&bt=52&bn=1&pz=0&ref=http:%2f%2fhabrahabr.ru%2fpost%2f85201%2f&custom=1%3Druby&rleurl="><img width="100%" vspace="0" hspace="0" height="90" border="0" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/jsf.jpg"></a></td></tr></tbody></table></div></div>
+	<script type="text/javascript">
+	(function(){
+		var custom = {};
+		
+			custom[1]	= 'ruby';
+		
+		new adriver("topline", {sid:176776, bt:52, bn:1, custom: custom});
+	})();
+	</script>
+
+
+
+
+		<div id="layout">	    
+		  <div id="header">
+  <div class="userpanel silver">
+    
+    
+      <a href="http://habrahabr.ru/login/" class="login">войти</a> <a href="http://habrahabr.ru/register/">зарегистрироваться</a>
+    
+  </div>
+  <a class="logo" href="http://habrahabr.ru/" title="На главную страницу"></a>
+  <div class="search">
+    <form id="search_form" name="search" method="get" action="http://habrahabr.ru/search/">
+      <input type="submit" value="">
+      <input type="text" name="q" value="поиск по сайту" onfocus="this.value = (this.value == &#39;поиск по сайту&#39;) ? &#39;&#39; : this.value" onblur="this.value = (this.value == &#39;&#39;) ? &#39;поиск по сайту&#39; : this.value" autocomplete="off">
+    </form>
+  </div>
+
+
+	<div class="main_menu">
+		<a href="http://habrahabr.ru/posts/top/" class="active">посты</a><a href="http://habrahabr.ru/qa/">q&amp;a</a><a href="http://habrahabr.ru/events/coming/">события</a><a href="http://habrahabr.ru/hubs/">хабы</a><a href="http://habrahabr.ru/companies/">компании</a>
+		<div class="banner_special">
+
+	 
+
+	 
+
+	
+	
+		<!--  AdRiver code START. Type:135x35 Site: habrahabr PZ: 0 BN: 0 -->
+		<script language="javascript" type="text/javascript"><!--
+		var RndNum4NoCash = Math.round(Math.random() * 1000000000);
+		var ar_Tail='unknown'; if (document.referrer) ar_Tail = escape(document.referrer);
+		document.write(
+		'<iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?'
+		+ 'sid=176776&target=top&w=135&h=35&bt=25&pz=0&rnd=' + RndNum4NoCash + '&tail256=' + ar_Tail
+		+ '" frameborder=0 vspace=0 hspace=0 width=135 height=35 marginwidth=0'
+		+ ' marginheight=0 scrolling=no></iframe>');
+		//--></script><iframe src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/erle(3).htm" frameborder="0" vspace="0" hspace="0" width="135" height="35" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+		<noscript>
+		&lt;a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=176776&amp;bt=25&amp;pz=0&amp;rnd=795668059" target=_top&gt;
+		&lt;img src="http://ad.adriver.ru/cgi-bin/rle.cgi?sid=176776&amp;bt=25&amp;pz=0&amp;rnd=795668059" alt="-AdRiver-" border=0 width=135 height=35&gt;&lt;/a&gt;
+		</noscript>
+
+		<!--  AdRiver code END  -->
+	
+	
+
+</div>
+	</div>
+
+
+</div>
+
+
+	
+		  
+	  
+		  
+
+
+	
+  <div class="content_left">
+
+	
+
+
+
+
+
+
+
+
+
+	
+
+		
+  <div class="post" id="post_85201">
+    <h1 class="title">
+      
+	    
+
+	      
+      
+        <span class="post_title">Bundler — менеджер для управления gem'ами</span>
+      
+      
+      
+
+      
+  	</h1>
+  	
+  	
+<div class="hubs">
+	
+		<a href="http://habrahabr.ru/hub/ruby/" class="hub " title="Вы не подписаны на этот хаб">Ruby</a><span class="profiled_hub" title="Профильный хаб">*</span>
+	
+</div>
+
+  	
+  	<div class="content html_format">
+  	<h4>Что такое Bundler?</h4><br>
+Это менеджер для управления зависимостями gem'ов в ruby приложениях. Эта утилита позволяет легко устанавливать необходимые gem'ы для вашего приложения, при этом вовсе не зависеть от установленных в системе. Если вы использовали Rails для своих разработок, то вы вспомните, как задавали зависимости gem'ов c помощью config.gem в enviroment.rb, Bundler решает эту задачу намного удобнее и проще. Его включили в Rails 3.0 по умолчанию и теперь, именно он используется для управления зависимостями gem’ов в данной версии фреймворка. Эту утилиту можно использовать для любого ruby фреймворка.<br>
+<a name="habracut"></a><br>
+<h4>Установка</h4><br>
+Устанавливаем эту утилиту как любой другой gem:<br>
+<br>
+<code>gem install bundler</code><br>
+<br>
+Для Rails 3.0 ничего больше делать не нужно, потому как он используется по умолчанию. А для Rails.2.3.x нужно выполнить следующие шаги. C начала добавить ниже приведенный код в boot.rb перед Rails.boot!:<br>
+<br>
+<code>class Rails::Boot <br>
+&nbsp;&nbsp;def run <br>
+&nbsp;&nbsp;&nbsp;&nbsp;load_initializer <br>
+&nbsp;&nbsp;&nbsp;&nbsp;extend_environment <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Rails::Initializer.run(:set_load_path) <br>
+&nbsp;&nbsp;end <br>
+ <br>
+&nbsp;&nbsp;def extend_environment <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Rails::Initializer.class_eval do <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;old_load = instance_method(:load_environment) <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;define_method(:load_environment) do <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bundler.require :default, Rails.env <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;old_load.bind(self).call <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;end <br>
+&nbsp;&nbsp;&nbsp;&nbsp;end <br>
+&nbsp;&nbsp;end <br>
+end</code><br>
+<br>
+Далее создать файл preinitializer.rb в директории config/initializers с содержимым:<br>
+<br>
+<code>begin <br>
+&nbsp;&nbsp;# Require the preresolved locked set of gems. <br>
+&nbsp;&nbsp;require File.expand_path('../../.bundle/environment', __FILE__) <br>
+rescue LoadError <br>
+&nbsp;&nbsp;# Fallback on doing the resolve at runtime. <br>
+&nbsp;&nbsp;require "rubygems" <br>
+&nbsp;&nbsp;require "bundler" <br>
+&nbsp;&nbsp;Bundler.setup <br>
+end</code><br>
+<br>
+<h4>Конфигурирование</h4><br>
+После создании нового Rails приложения в версии 3.0 в корне проекта уже существует файл Gemfile, который является конфигом для Bundler'а. Для версий Rails 2.3.x его нужно создать самому. Для этого нужно перейти в директорию проекта и выполнить команду:<br>
+<br>
+<code>bundle init</code><br>
+<br>
+В этом файле задаются все необходимые зависимости gem'ов. Рассмотрим какие именно возможности предоставляет данный конфиг файл. <br>
+<br>
+Сперва задается ресурс откуда по умолчанию будут устанавливаться gem'ы:<br>
+<br>
+<code>source 'http://gemcutter.org'</code><br>
+<br>
+Как уже многие знают ресурс <a href="http://gemcutter.org/">gemcutter.org</a> становится неким стандартом для хранения gem'ов, поэтому при создании конфига именно этот ресурс будет установлен по умолчанию. Но вы легко можете его заменить допустим на <a href="http://gems.github.com/">gems.github.com</a> или добавить столько ресурсов сколько вам нужно:<br>
+<br>
+<code>source 'http://gemcutter.org'<br>
+source 'http://gems.github.com'<br>
+source 'http://gems.rubyforge.org'</code><br>
+<br>
+Далее уже идет список gem'ом которые нужны для работы приложения:<br>
+<br>
+<code>gem 'will_paginate'<br>
+gem 'oauth' <br>
+gem 'money'</code><br>
+<br>
+Здесь нужно отметить, что gem'ы можно объединять в группы и далее устанавливать только определенные группы:<br>
+<br>
+<code>group :development do<br>
+&nbsp;&nbsp;gem 'rspec'<br>
+&nbsp;&nbsp;gem 'populator'<br>
+&nbsp;&nbsp;gem 'faker'<br>
+end<br>
+<br>
+group :production do<br>
+&nbsp;&nbsp;gem 'memcache-client'<br>
+end</code><br>
+<br>
+Доступна и другая форма объединения gem'ов в группы:<br>
+<br>
+<code>gem 'rspec', :group =&gt; 'development'<br>
+gem 'populator', :group =&gt; 'development'<br>
+gem 'memcache-client', :group =&gt; 'production'</code><br>
+<br>
+По умолчанию все gem'ы включаются в группу default.<br>
+Если нужна именно конкретная версия gem'а то можно задать ее номер:<br>
+<br>
+<code>gem "rack", "1.0.1"<br>
+gem "rails", "&gt;=2.3.2"</code><br>
+<br>
+Есть возможность задать имя файла который будет подключен во время подключения библиотеки Bundler'ом. По умолчанию это имя gem'а поэтому в большинстве случаев ничего задавать не нужно. Опция которая позволяет задать имя файла для подключения называется require, используется она следующим способом:<br>
+<br>
+<code>gem 'gchartrb', :require =&gt; 'google_chart'</code><br>
+<br>
+В случае если нужно указать git репозитория для скачивания gem'а то нужно использовать опцию git:<br>
+<br>
+<code>gem 'will_paginate', :git =&gt; 'git://github.com/mislav/will_paginate.git'</code><br>
+<br>
+<h4>Использование</h4><br>
+Как тока задали все нужные gem'ы, нужно выполнить команду:<br>
+<br>
+<code>bundle install</code><br>
+<br>
+Эта команда решит все зависимости и установит недостающие gem'ы. При этом если выполнить:<br>
+<br>
+<code>gem list</code><br>
+<br>
+То вы там не увидите gem'ы которые были установлены с помощью bundler'а. Все установленные gem'ы находится в директории ~/.bundler. Откуда он их и будет подключать.<br>
+Посмотреть список установленных gem'ов можно с помощью команды:<br>
+<br>
+<code>bundle show</code><br>
+<br>
+Если нужный gem уже установлен в системе, то для него будет создана ссылка. После каждого изменения файла Gemfile, нужно выполнить команду install. Папка ~/.bundler не является обязательной, если вы хотите установить gem'ы в другую папку, это легко сделать:<br>
+<br>
+<code>bundle install ./vendor/bundler_gems</code><br>
+<br>
+Если помните, то в конфиг файле есть возможность включать все gem'ы в группы, так вот при установки можно указать какие группы gem'ов не устанавливать:<br>
+<br>
+<code>bundle install —without test</code><br>
+<br>
+Допустим зачем устанавливать gem'ы на production server который нужны только для тестирования.<br>
+Если gem имеет исполняемые файлы, то их можно запускать след образом:<br>
+<br>
+<code>bundle exec cassandra_helper cassandra</code><br>
+<br>
+Как только вы закончили разработку приложения, нужно заблокировать изменение Gemfile:<br>
+<br>
+<code>bundle lock</code><br>
+<br>
+После выполнения данной команды создастся файл Gemfile.lock, который будет содержать все зависимости на основе установленых gem’ов у вас на компьютере. Это делается для того чтоб зафиксировать версии gem’ов при которых приложение работает корректно. Данный файл будет иметь следующий вид:<br>
+<br>
+<code>--- <br>
+dependencies: <br>
+&nbsp;&nbsp;faker: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;group: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;- :development<br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: "&gt;= 0"<br>
+&nbsp;&nbsp;memcache-client: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;group: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;- :test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: "&gt;= 0"<br>
+&nbsp;&nbsp;sqlite3-ruby: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;group: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;- :default<br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: "&gt;= 0"<br>
+&nbsp;&nbsp;oauth: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;group: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;- :default<br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: "&gt;= 0"<br>
+specs: <br>
+- stomp: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 1.1.4<br>
+- populator: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 0.2.5<br>
+- json: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 1.2.0<br>
+- thrift: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 0.2.0<br>
+- thrift_client: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 0.3.3<br>
+- rspec: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 1.3.0<br>
+- ruby-hmac: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 0.4.0<br>
+- oauth: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;version: 0.3.6<br>
+hash: 0ac3c8666943a1e2294be2851316d83791479451<br>
+sources: <br>
+- Rubygems: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;uri: <a href="http://gemcutter.org/">gemcutter.org</a></code><br>
+<br>
+При этом если вы измените Gemfile и попробуете выполнить команду install, то установка не будет произведена, так как gem’ы заблокированы. Для того чтоб установить новые gem’ы уже в залоченном состоянии, выполняется команда install с параметром relockinstall stall --relock, выполняется командак л нужно заблокировать изминение:<br>
+<br>
+<code>bundle install --relock</code><br>
+<br>
+В bundler’е предусмотрена возможность упаковки gem’ов:<br>
+<br>
+<code>bundle pack</code><br>
+<br>
+После выполнения данной команды в директории vendor/cache будут сохранены все нужные gem’ы, впоследствии чего установка gem’ов будет происходить именно с этой директории. Эта опция будет полезна только для тех у кого нет возможности на production server устанавливать gem’ы с публичных репозиториев.<br>
+<br>
+Вот и все, что я хотел вам рассказать об этой удобной утилите. Попробуйте поработать с ней хотя бы час и я думаю, она вам понравится. 
+  	
+  	<div class="clear"></div> 	
+  	</div>
+    
+<ul class="tags">
+	<li><a href="http://habrahabr.ru/search/?q=%5Bruby%5D&target_type=posts" rel="tag">ruby</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Brails%5D&target_type=posts" rel="tag">rails</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bbundler%5D&target_type=posts" rel="tag">bundler</a></li><li>, <a href="http://habrahabr.ru/search/?q=%5Bmanage%20gems%5D&target_type=posts" rel="tag">manage gems</a></li>
+</ul>
+
+    <div class="infopanel" id="infopanel_post_85201">
+	
+        
+	
+	<div class="voting   ">
+
+		  				  
+		
+		<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+		<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+		
+
+		<div class="mark positive ">
+			
+			<span class="score" title="Всего 25: ↑21 и ↓4">+17</span>
+			
+			  					  
+		</div>  
+
+	</div>
+	
+	
+
+	
+
+	<div class="published">22 февраля 2010, 14:54</div>
+
+	<div class="favorite">
+		
+		
+		<a class="guest" href="http://habrahabr.ru/post/85201/#" onclick="return false;" title="Только зарегистрированные пользователи могут добавлять посты в избранное"></a>
+		
+	</div>
+
+	<div class="favs_count" title="Количество пользователей, добавивших пост в избранное">35</div>
+
+	
+	<div class="twitter">
+		<a href="http://twitter.com/intent/tweet?text=http://habr.ru/p/85201/+Bundler+%E2%80%94+%D0%BC%D0%B5%D0%BD%D0%B5%D0%B4%D0%B6%D0%B5%D1%80+%D0%B4%D0%BB%D1%8F+%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F+gem%27%D0%B0%D0%BC%D0%B8+%23habr" title="Опубликовать ссылку в Twitter" target="_blank"></a>
+	</div>
+	<div class="vkontakte"> 
+		<a href="http://vkontakte.ru/share.php?url=http://habr.ru/p/85201/" title="Опубликовать ссылку во ВКонтакте" onclick="window.open(this.href, &#39;Опубликовать ссылку во Вконтакте&#39;, &#39;width=800,height=300&#39;); return false"></a>
+	</div>
+	<div class="facebook">
+		<a href="https://www.facebook.com/sharer/sharer.php?u=http://habr.ru/p/85201/" title="Опубликовать ссылку в Facebook" onclick="window.open(this.href, &#39;Опубликовать ссылку в Facebook&#39;, &#39;width=640,height=436,toolbar=0,status=0&#39;); return false"></a>
+	</div>
+	<div class="googleplus">
+		<a href="https://plus.google.com/share?url=http://habr.ru/p/85201/" title="Опубликовать ссылку в Google Plus" onclick="window.open(this.href, &#39;Опубликовать ссылку в Google Plus&#39;, &#39;width=800,height=300&#39;); return false"></a>
+	</div>
+	
+
+	
+
+	
+
+	
+	
+
+	
+	
+	<div class="author">
+		
+		<a title="Автор текста" href="http://habrahabr.ru/users/nest_d/">nest_d</a>
+		<span class="rating" title="рейтинг пользователя">12,0</span>
+		
+	</div>
+	
+	
+
+	
+
+</div>
+<div class="clear"></div>    
+    
+	</div>
+
+		
+		
+<div class="comments_list " id="comments">
+
+  <h2 class="title ">комментарии (<span id="comments_count">6</span>)
+    
+  </h2>
+
+   
+    
+<div class="comment_item" id="comment_2543778">
+	
+	
+		<div class="info  	" rel="2543778">
+			<div class="folding-dot-holder"><div class="folding-dot"></div></div>
+			
+			<div id="voting_2543778" class="voting   ">
+										
+				
+					<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+					<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+				
+				<div class="mark positive ">
+						<span class="score" title="Всего 1: ↑1 и ↓0">+1</span> 
+				</div>	 
+			</div>
+			
+			<a href="http://habrahabr.ru/users/roTuKa/" class="avatar"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/small_2964.jpg" alt=""></a>
+			<a href="http://habrahabr.ru/users/roTuKa/" class="username">roTuKa</a>
+			<time datetime="2010-02-22T22:40:34+03:00">22 февраля 2010, 22:40</time>
+			<a href="http://habrahabr.ru/post/85201/#comment_2543778" class="link_to_comment">#</a>
+			
+			
+			<span class="to_chidren"></span>
+			<div class="clear"></div>
+		</div>
+		<div class="message html_format ">
+			<blockquote>Как уже многие знают ресурс gemcutter.org становится неким стандартом…</blockquote><br>
+Уже перенесли его позавчера на <a href="http://rubygems.org/">http://rubygems.org/</a>, окончательно и бесповоротно. <br>
+При обновлении RubyGems до 1.3.6 (<code>sudo gem update --system</code>) рекомендуют заменить строку <code><a href="http://gems.rubyforge.org/">http://gems.rubyforge.org/</a></code> на <code><a href="http://rubygems.org/">http://rubygems.org/</a></code> в вашем файле <code>~/.gemrc</code> 
+		</div>
+		<div class="reply">
+			
+		</div>
+	
+	<div class="reply_comments" id="reply_comments_2543778">
+	
+	</div>
+</div>
+
+   
+    
+<div class="comment_item" id="comment_2544073">
+	
+	
+		<div class="info  	" rel="2544073">
+			<div class="folding-dot-holder"><div class="folding-dot"></div></div>
+			
+			<div id="voting_2544073" class="voting   ">
+										
+				
+					<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+					<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+				
+				<div class="mark  negative">
+						<span class="score" title="Всего 1: ↑0 и ↓1">–1</span> 
+				</div>	 
+			</div>
+			
+			<a href="http://habrahabr.ru/users/vsviridov/" class="avatar"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/small_19236.jpg" alt=""></a>
+			<a href="http://habrahabr.ru/users/vsviridov/" class="username">vsviridov</a>
+			<time datetime="2010-02-23T00:04:11+03:00">23 февраля 2010, 00:04</time>
+			<a href="http://habrahabr.ru/post/85201/#comment_2544073" class="link_to_comment">#</a>
+			
+			
+			<span class="to_chidren"></span>
+			<div class="clear"></div>
+		</div>
+		<div class="message html_format bad bad1">
+			Только недавно писали про <a href="http://habrahabr.ru/blogs/client_side_optimization/84255/">Bundler: клинетская оптимизация скриптов</a> для .Net. :) Нужно уже для проектов нэймспейсы делать, иначе все путаться будут. 
+		</div>
+		<div class="reply">
+			
+		</div>
+	
+	<div class="reply_comments" id="reply_comments_2544073">
+	
+	</div>
+</div>
+
+   
+    
+<div class="comment_item" id="comment_2544458">
+	
+	
+		<div class="info  	" rel="2544458">
+			<div class="folding-dot-holder"><div class="folding-dot"></div></div>
+			
+			<div id="voting_2544458" class="voting   ">
+										
+				
+					<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+					<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+				
+				<div class="mark positive ">
+						<span class="score" title="Всего 1: ↑1 и ↓0">+1</span> 
+				</div>	 
+			</div>
+			
+			<a href="http://habrahabr.ru/users/vite7/" class="avatar"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/small_18090.png" alt=""></a>
+			<a href="http://habrahabr.ru/users/vite7/" class="username">vite7</a>
+			<time datetime="2010-02-23T03:05:41+03:00">23 февраля 2010, 03:05</time>
+			<a href="http://habrahabr.ru/post/85201/#comment_2544458" class="link_to_comment">#</a>
+			
+			
+			<span class="to_chidren"></span>
+			<div class="clear"></div>
+		</div>
+		<div class="message html_format ">
+			Браво! Спасибо. Прямо сейчас ковыряю третие рельсы как раз на тему «как бы развернуть rails 3.0 приложение на Site5. Зашел отдохнуть, почитать Хабр и вот, как раз то, что нужно.<br>
+<br>
+То есть, как я понял, достаточно команды bundle pack и развертывание приложения сведется к копированию файлов на сервер? Сам Rails gem тоже туда упакуется (разумеется если его включить в Gemfile) или придется ставить отдельно?  
+		</div>
+		<div class="reply">
+			
+		</div>
+	
+	<div class="reply_comments" id="reply_comments_2544458">
+	
+	</div>
+</div>
+
+   
+    
+<div class="comment_item" id="comment_2852322">
+	
+	
+		<div class="info  	" rel="2852322">
+			<div class="folding-dot-holder"><div class="folding-dot"></div></div>
+			
+			<div id="voting_2852322" class="voting   ">
+										
+				
+					<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+					<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+				
+				<div class="mark  ">
+						<span class="score" title="Всего 0: ↑0 и ↓0">0</span> 
+				</div>	 
+			</div>
+			
+			<a href="http://habrahabr.ru/users/woto/" class="avatar"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/stub-user-small.gif" alt=""></a>
+			<a href="http://habrahabr.ru/users/woto/" class="username">woto</a>
+			<time datetime="2010-05-19T04:27:25+04:00">19 мая 2010, 04:27</time>
+			<a href="http://habrahabr.ru/post/85201/#comment_2852322" class="link_to_comment">#</a>
+			
+			
+			<span class="to_chidren"></span>
+			<div class="clear"></div>
+		</div>
+		<div class="message html_format ">
+			А можно поинтересоваться это вы сами додумались или перевод какой-то статьи? Хотелось бы подписаться на автора. 
+		</div>
+		<div class="reply">
+			
+		</div>
+	
+	<div class="reply_comments" id="reply_comments_2852322">
+	 
+		
+<div class="comment_item" id="comment_2852731">
+	
+	
+		<div class="info  	" rel="2852731">
+			<div class="folding-dot-holder"><div class="folding-dot"></div></div>
+			
+			<div id="voting_2852731" class="voting   ">
+										
+				
+					<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+					<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+				
+				<div class="mark  ">
+						<span class="score" title="Всего 0: ↑0 и ↓0">0</span> 
+				</div>	 
+			</div>
+			
+			<a href="http://habrahabr.ru/users/nest_d/" class="avatar"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/small_20047.jpg" alt=""></a>
+			<a href="http://habrahabr.ru/users/nest_d/" class="username">nest_d</a>
+			<time datetime="2010-05-19T10:28:10+04:00">19 мая 2010, 10:28</time>
+			<a href="http://habrahabr.ru/post/85201/#comment_2852731" class="link_to_comment">#</a>
+			
+			
+				<a href="http://habrahabr.ru/post/85201/#comment_2852322" data-id="2852731" data-parent_id="2852322" class="to_parent">↑</a>
+			
+			<span class="to_chidren"></span>
+			<div class="clear"></div>
+		</div>
+		<div class="message html_format ">
+			нет это не перевод, просто разобрался как все работает и написал статью, конечно же читал разные источники  
+		</div>
+		<div class="reply">
+			
+		</div>
+	
+	<div class="reply_comments" id="reply_comments_2852731">
+	
+	</div>
+</div>
+
+	
+	</div>
+</div>
+
+   
+    
+<div class="comment_item" id="comment_4226121">
+	
+	
+		<div class="info  	" rel="4226121">
+			<div class="folding-dot-holder"><div class="folding-dot"></div></div>
+			
+			<div id="voting_4226121" class="voting   ">
+										
+				
+					<span class="plus" title="Голосовать могут только зарегистрированные пользователи."></span>
+					<span class="minus" title="Голосовать могут только зарегистрированные пользователи."></span>
+				
+				<div class="mark  ">
+						<span class="score" title="Всего 0: ↑0 и ↓0">0</span> 
+				</div>	 
+			</div>
+			
+			<a href="http://habrahabr.ru/users/kostitsyn/" class="avatar"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/small_17024.jpg" alt=""></a>
+			<a href="http://habrahabr.ru/users/kostitsyn/" class="username">kostitsyn</a>
+			<time datetime="2011-09-07T20:47:28+04:00"> 7 сентября 2011, 20:47</time>
+			<a href="http://habrahabr.ru/post/85201/#comment_4226121" class="link_to_comment">#</a>
+			
+			
+			<span class="to_chidren"></span>
+			<div class="clear"></div>
+		</div>
+		<div class="message html_format ">
+			&gt;bundle init<br>
+<br>
+нет такой команды :(<br>
+предыдущие шаги выполнил. 
+		</div>
+		<div class="reply">
+			
+		</div>
+	
+	<div class="reply_comments" id="reply_comments_4226121">
+	
+	</div>
+</div>
+
+  
+</div>
+
+		
+	
+		
+			<p class="for_users_only_msg">Только зарегистрированные пользователи могут оставлять комментарии. <a href="http://habrahabr.ru/login/">Войдите</a>, пожалуйста.</p>
+		
+		
+	
+
+
+
+		<div id="edit_tags_form" class="hidden">
+<form action="http://habrahabr.ru/post/85201/#" method="post">
+  <input type="hidden" name="action" value="add">
+  <input type="hidden" name="ti" value="0">
+  <input type="hidden" name="tt" value="0">
+  <label>Пометьте топик понятными вам метками, если хотите</label>
+  <input type="text" name="tags_string" class="tags_string" autocomplete="off" style="">
+  <div class="description">Метки лучше разделять запятой. Например: <i>общение, социальные сети, myspace.com, подростки, мердок</i></div>
+  <input type="submit" value="Сохранить" class="submit"> или <a href="http://habrahabr.ru/post/85201/#" class="close" onclick="return close_edit_tags()">закрыть</a>
+</form>
+</div>
+	
+	
+
+  </div>
+  <div class="sidebar_right">
+	
+		
+
+
+
+
+	<div class="banner_240x400">
+
+		<script type="text/javascript">
+			(function(){
+				var custom = [];
+			/* custom params */
+			
+				custom[1]	= 'ruby';
+			
+				
+
+			/* end of custom params */
+				custom.getStd = function(){for(var i=0,j,s=[];i<this.length;i++){if(this[i])s.push((!j?(j=1,i+'='):'')+escape(this[i]));else j=0}return s.length?'&custom='+s.join(';'):''};
+
+				var RndNum4NoCash = Math.round(Math.random() * 1000000000),
+					ar_Tail = escape(document.referrer || 'unknown');
+				document.write('<iframe src="http://ad.adriver.ru/cgi-bin/erle.cgi?'
+					+ 'sid=176776&target=top&bt=22&pz=0&rnd=' + RndNum4NoCash + '&tail256=' + ar_Tail + custom.getStd()
+					+ '" frameborder=0 vspace=0 hspace=0 width=240 height=400 marginwidth=0'
+					+ ' marginheight=0 scrolling=no></iframe>');
+			})();
+		</script><iframe src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/erle(2).htm" frameborder="0" vspace="0" hspace="0" width="240" height="400" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+	</div>
+
+
+
+
+
+
+		
+
+<div class="block daily_best_posts">
+  <div class="title">Лучшее <sup>за 24 часа</sup> ↓ </div>
+  <div class="posts_list">
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				<!--<a href="http://habrahabr.ru/company/toster/blog/131694/#toster_tickets">--><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/toster.gif" alt="Toster" style="vertical-align:top;float:left;display:block;margin-right:10px;margin-top:4px;" class="help-tip"><!--</a>-->
+
+        <a href="http://habrahabr.ru/post/143129/" class="post_name">Нейросети для чайников. Начало</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143114/" class="post_name">Как Булгаков помогает изучать расстановку запятых – сайт для повышения грамотности</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143140/" class="post_name">О мошенничестве и реакции на него полиции</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/140602/" class="post_name">Веб-сервисы играют в покер</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143133/" class="post_name">Электричество и вода из воздуха — спускаемся с небес на землю</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143142/" class="post_name">Почему трансатлантический пинг быстрее, чем вывод пиксела на экран</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143147/" class="post_name">Android портирован на C#</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143022/" class="post_name">Google Chrome хакеру не помощник</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143115/" class="post_name">Биоинформатика: взгляд изнутри</a>
+      </div>
+    
+      <div class="post_item">
+        
+				
+				
+				
+				
+				
+
+        <a href="http://habrahabr.ru/post/143106/" class="post_name">На KickStarter участники онлайн-сообществ разоблачили мошенников</a>
+      </div>
+    
+  </div>
+  <div class="all">« <a href="http://habrahabr.ru/top/">все лучшие</a></div>
+</div>
+
+		
+
+
+<div class="block similar_posts">
+
+	<div class="title">Похожие посты ↓ </div>
+  <div class="posts_list">
+  	
+    	<div class="post_item">
+    				<span class="when">22.02.2010</span> → 
+    				<a class="post_name" href="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/Bundler — менеджер для управления gem'ами   Хабрахабр.htm">Bundler — менеджер для управления gem'ами</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">30.01.2012</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/137311/">Информационный поток на Google+ о Ruby, Rails, Sinatra</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">30.10.2009</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/73871/">Документация Ruby/Rails на вашем iPhone</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">17.05.2011</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/119423/">Kazan.rb #1 — встреча Ruby &amp; Rails программистов в Казани 21 мая в It-park</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">19.04.2012</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/142399/">Почему многие выбирают Ruby, а не PHP</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">16.02.2012</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/138242/">Только Ruby, только хардкор!</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">13.02.2012</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/138101/">Лучший способ изучить Rails</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">11.02.2012</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/137991/">gem the_sortable_tree</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">28.12.2011</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/135436/">Ruby NoName Podcast S03E04 (Новогодний)</a>
+      </div>
+  	
+    	<div class="post_item">
+    				<span class="when">05.11.2011</span> → 
+    				<a class="post_name" href="http://habrahabr.ru/post/131928/">Bundler как замена тестовым джемсетам</a>
+      </div>
+  	
+  </div>			
+</div>
+
+
+
+
+		
+
+
+<div class="block live_broadcast_activity">
+  <div class="title">Прямой эфир ↓ </div>
+  <div class="posts_list">
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Leproza/" class="user_name">Leproza</a> →
+      <a href="http://habrahabr.ru/post/143129/#comment_4795992" class="post_name">Нейросети для чайников. Начало</a>&nbsp;<span class="count">47</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Sicness/" class="user_name">Sicness</a> →
+      <a href="http://habrahabr.ru/post/143147/#comment_4795991" class="post_name">Android портирован на C#</a>&nbsp;<span class="count">29</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/OLS/" class="user_name">OLS</a> →
+      <a href="http://habrahabr.ru/post/143119/#comment_4795990" class="post_name">+1 расширение для Mozilla Firefox</a>&nbsp;<span class="count">55</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/RiddleRus/" class="user_name">RiddleRus</a> →
+      <a href="http://habrahabr.ru/post/140602/#comment_4795989" class="post_name">Веб-сервисы играют в покер</a>&nbsp;<span class="count">36</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Captcha/" class="user_name">Captcha</a> →
+      <a href="http://habrahabr.ru/post/143140/#comment_4795988" class="post_name">О мошенничестве и реакции на него полиции</a>&nbsp;<span class="count">50</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Xitsa/" class="user_name">Xitsa</a> →
+      <a href="http://habrahabr.ru/post/143072/#comment_4795987" class="post_name">Итоги 20-го международного конкурса непонятного кода на C</a>&nbsp;<span class="count">24</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/olegchir/" class="user_name">olegchir</a> →
+      <a href="http://habrahabr.ru/post/142207/#comment_4795986" class="post_name">Должен ли ты использовать .Net для своего стартапа?</a>&nbsp;<span class="count">117</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/jsignal/" class="user_name">jsignal</a> →
+      <a href="http://habrahabr.ru/post/143131/#comment_4795985" class="post_name">+1 расширение для Opera</a>&nbsp;<span class="count">58</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Nevod/" class="user_name">Nevod</a> →
+      <a href="http://habrahabr.ru/post/143044/#comment_4795984" class="post_name">Постсмысловая невротическая цивилизация</a>&nbsp;<span class="count">120</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/archim/" class="user_name">archim</a> →
+      <a href="http://habrahabr.ru/post/142871/#comment_4795982" class="post_name">Как Google Russia рекламирует вирусописателей</a>&nbsp;<span class="count">83</span>
+    </div>
+
+  </div>
+  
+</div>
+
+
+
+  
+		
+
+
+
+<div class="block toster_htmlblock">
+	<div class="logo"><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=337249&bt=21&bid=1748230&bn=1748230&rnd=1879060241"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/logo.png" alt=""></a></div>
+	<div class="description">
+		<p>Роберт Ниман  <span class="company_name">/ Mozilla</span></p>
+		<p>Фил Хоксворт <span class="company_name">/ R/GA</span></p>
+		<p>Джо МакКенн <span class="company_name">/ SubPrint</span></p>
+		<p>Ральф Уитбэк <span class="company_name">/ appendTo</span></p>
+		<p>Ян Йонгбум  <span class="company_name">/ Cloud9 IDE/Ajax.org</span></p>
+		<p>Лука Сале <span class="company_name">/ Blackberry</span></p>
+		<p>Шавкат Айнурин <span class="company_name">/ News360</span></p>
+		<p>Константин Кичинский <span class="company_name">/ Microsoft</span></p>
+	</div>
+	<div class="download"><a href="http://ad.adriver.ru/cgi-bin/click.cgi?sid=1&ad=337249&bt=21&bid=1748230&bn=1748230&rnd=1879060241"><img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/button.png" alt=""></a></div>
+
+</div>
+	
+
+
+   
+		
+
+<div class="block best_company">
+
+		<div class="title">Компания дня <img src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/bg_cicle_help.png" class="help-tip"></div>
+
+		<div class="company_info">
+			<div class="name">
+			 <img class="favicon" src="./Bundler — менеджер для управления gem'ами   Хабрахабр_files/favicon_1631.ico" alt="Apps4All" height="16" width="16">
+			 <div class="company_name"><a href="http://habrahabr.ru/company/apps4all/" class="title">Apps4All</a></div>
+			</div>
+
+			<p>Последний пост:
+				<a href="http://habrahabr.ru/company/apps4all/blog/142969/">Смартфоны Intel inside: x86 во всех карманах страны?</a>
+			</p>
+
+			<div class="buttons">
+  			<div id="fans_count">79 подписчиков</div>
+  			
+			</div>
+		</div>
+
+	</div>
+
+
+		
+
+<div class="block qa_activity">
+  <div class="title">Q&amp;A ↓ </div>
+  <div class="posts_list">
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/akzhan/" class="user_name">akzhan</a> →
+      <a href="http://habrahabr.ru/qa/18946/#answer_77417" class="post_name">Десктопное HTML-приложение без браузера</a>&nbsp;<span class="count">7</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/AxisPod/" class="user_name">AxisPod</a> →
+      <a href="http://habrahabr.ru/qa/18953/#comment_90618" class="post_name">Внешний hdd western digital приказывает долго жить</a>&nbsp;<span class="count">4</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/xandr0s/" class="user_name">xandr0s</a> →
+      <a href="http://habrahabr.ru/qa/18956/#answer_77416" class="post_name">Посоветуйте оборудования для офисной WiFi сети</a>&nbsp;<span class="count">4</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Zelgadis/" class="user_name">Zelgadis</a> →
+      <a href="http://habrahabr.ru/qa/18942/#comment_90613" class="post_name">Миф или реальность? Начало записи разговора по ключевому слову?</a>&nbsp;<span class="count">4</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/alz/" class="user_name">alz</a> →
+      <a href="http://habrahabr.ru/qa/18954/#comment_90612" class="post_name">Удалённый доступ к Ubuntu 12.04 с Mac OS X</a>&nbsp;<span class="count">3</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Riateche/" class="user_name">Riateche</a> →
+      <a href="http://habrahabr.ru/qa/18952/#answer_77412" class="post_name">Callback кнопки «Мне нравится» у сайта Вконтакте</a>&nbsp;<span class="count">6</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/giner/" class="user_name">giner</a> →
+      <a href="http://habrahabr.ru/qa/18955/#answer_77411" class="post_name">Помогите восстановить grub или переустановить Ubuntu с сохранением Windows</a>&nbsp;<span class="count">3</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/InteractiveTechnology/" class="user_name">InteractiveTechnology</a> →
+      <a href="http://habrahabr.ru/qa/18957/#comment_90611" class="post_name">Какие существуют доступные пути из России в Европу?</a>&nbsp;<span class="count">1</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/lagranzh/" class="user_name">lagranzh</a> →
+      <a href="http://habrahabr.ru/qa/18949/#comment_90609" class="post_name">Как научиться жить с unity и gnome3?</a>&nbsp;<span class="count">5</span>
+    </div>
+
+    <div class="post_item">
+      <a href="http://habrahabr.ru/users/Andoryu/" class="user_name">Andoryu</a> →
+      <a href="http://habrahabr.ru/qa/18831/#comment_90608" class="post_name">Как организовать видео-съемку во дворе?</a>&nbsp;<span class="count">8</span>
+    </div>
+
+  </div>
+  <div class="all">« <a href="http://habrahabr.ru/qa/">все вопросы</a></div>
+  
+</div>
+
+		
+
+<div class="block new_vacanies">
+  <div class="title">О, работа! ↓ </div>
+  <div class="vacancies">
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/7687-programmist-python-django">Программист Python (Django)</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8749-senior-web-application-developer-java-javascript">Senior Web Application Developer (Java, JavaScript)</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8748-senior-java-developer">Senior Java Developer</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8657-ios-razrabotchik-udalyonnaya-rabota">iOS-разработчик (удалённая работа)</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8745-ischem-razrabotchikov-pod-ios">Ищем разработчиков под iOS</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8731-mr-backend-php">Mr. Backend (PHP)</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8730-dr-frontend">Dr. Frontend</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8744-php-koder-v-startap">PHP-кодер в стартап</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8743-web-razrabotchik">Web-разработчик</a>
+		</div>
+		
+		<div class="job_item">
+			<a href="http://hantim.ru/jobs/8742-programmist-1s">Программист 1С</a>
+		</div>
+		
+  </div>
+  <div class="all">« <a href="http://hantim.ru/">все вакансии</a></div>
+
+	</div>
+      
+		
+
+		
+
+
+<div class="block similar_events">
+  <div class="title">Ближайшие события</div>
+  <div class="events">
+    
+    <div class="event">
+			
+			<div class="date">
+				<div class="dayname dayname_4"></div>
+				<div class="day">03</div>
+				<div class="month">мая</div>				
+			</div>
+			
+			<div class="title">
+			 <a href="http://habrahabr.ru/events/671/">1С-Битрикс: Корпоративный портал 11.5 – cоциальный интранет из «коробки»</a>			 
+			</div>
+		</div>
+		
+    <div class="event">
+			
+			<div class="date">
+				<div class="dayname dayname_6"></div>
+				<div class="day">05</div>
+				<div class="month">мая</div>				
+			</div>
+			
+			<div class="title">
+			 <a href="http://habrahabr.ru/events/666/">Третья специализированная конференция WebCamp 2012</a>			 
+			</div>
+		</div>
+		
+    <div class="event">
+			
+			<div class="date">
+				<div class="dayname dayname_5"></div>
+				<div class="day">11</div>
+				<div class="month">мая</div>				
+			</div>
+			
+			<div class="title">
+			 <a href="http://habrahabr.ru/events/308/">Application Developer Days-3</a>			 
+			</div>
+		</div>
+		
+    <div class="event">
+			
+			<div class="date">
+				<div class="dayname dayname_6"></div>
+				<div class="day">12</div>
+				<div class="month">мая</div>				
+			</div>
+			
+			<div class="title">
+			 <a href="http://habrahabr.ru/events/643/">Объединенная конференция «Perl Mova» и YAPC::Russia «May Perl»</a>			 
+			</div>
+		</div>
+		
+    <div class="event">
+			
+			<div class="date">
+				<div class="dayname dayname_6"></div>
+				<div class="day">12</div>
+				<div class="month">мая</div>				
+			</div>
+			
+			<div class="title">
+			 <a href="http://habrahabr.ru/events/672/">ТеСТ-кэмп</a>			 
+			</div>
+		</div>
+		
+  </div>
+  <div class="all">« <a href="http://habrahabr.ru/events/">все события</a></div>
+</div>
+
+
+	
+  </div>
+  <div class="clear"></div>
+
+		  <div id="footer">
+      
+			
+			<dl>
+				<dd><a href="http://habrahabr.ru/login/">Войти</a></dd>
+				<dd><a href="http://habrahabr.ru/register/">Регистрация</a></dd>
+			</dl>
+			
+			<dl>
+				<dt>Разделы</dt>
+			  
+				<dd><a href="http://habrahabr.ru/qa/">Q&amp;A</a></dd>
+				<dd><a href="http://habrahabr.ru/hubs/">Хабы</a></dd>
+				<dd><a href="http://habrahabr.ru/events/">События</a></dd>
+				<dd><a href="http://habrahabr.ru/companies/">Компании</a></dd>
+				<dd><a href="http://habrahabr.ru/job/">Работа</a></dd>
+				<dd><a href="http://habrahabr.ru/people/">Люди</a></dd>
+			</dl>
+			<dl>
+				<dt>Посты</dt>
+				
+				<dd><a href="http://habrahabr.ru/posts/top/">Лучшие</a></dd>
+				<dd><a href="http://habrahabr.ru/posts/collective/">Тематические</a></dd>
+				<dd><a href="http://habrahabr.ru/posts/corporative/">Корпоративные</a></dd>
+				
+			</dl>
+			<dl>
+				<dt>Инфо</dt>
+				<dd><a href="http://habrahabr.ru/info/about/">О сайте</a></dd>
+				<dd><a href="http://habrahabr.ru/info/help/rules/">Правила</a></dd>
+				<dd><a href="http://habrahabr.ru/info/help/">Помощь</a></dd>
+				<dd><a href="http://habrahabr.ru/info/agreement/">Соглашение</a></dd>
+				<dd><a href="http://habrahabr.ru/info/stats/">Статистика</a></dd>
+			</dl>
+			<dl>
+				<dt>Услуги</dt>
+				<dd><a href="http://habrahabr.ru/info/advertising/">Реклама</a></dd>
+				<dd><a href="http://habrahabr.ru/info/advertising/corporate/">Корпоративные пакеты</a></dd>
+				<dd><a href="http://habrahabr.ru/info/advertising/workshops/">Семинары</a></dd>
+			</dl>
+      <div class="copyright">
+    		<a class="footer_logo" href="http://thematicmedia.ru/">Тематические Медиа</a>
+    		<div class="about">
+    			© 2006–2012<br>
+    			«<a href="http://www.thematicmedia.ru/">Тематические Медиа</a>»
+    		  <br><br>	
+  				Служба поддержки:<br>
+  				<a href="mailto:support@habrahabr.ru" title="адрес службы поддержки пользователей">support@habrahabr.ru</a><br><br><br>
+  				<a href="http://m.habrahabr.ru/">Мобильная версия</a>
+  			
+			  </div>
+      </div>
+	
+</div>
+		</div>
+	 	
+		
+    
+		
+    <script type="text/javascript">
+      $(document).ready(function(){
+        // test gggg
+        // настройки всплывающих уведомлений
+        $.jGrowl.defaults.closerTemplate = '<div>Закрыть все уведомления</div>';         
+        
+        // настройки тултипов
+        $(".help-tip").tipTip({maxWidth: "auto", edgeOffset: 10});  
+        
+      });
+      // global vars
+      var g_base_url = 'habrahabr.ru';
+      var g_show_xpanel = false;
+      var g_base_fullurl = 'http://habrahabr.ru/';
+      var g_is_guest = false;
+       
+    </script>
+    
+		
+    
+<script type="text/javascript">
+	/*<![CDATA[*/
+	var ga = document.createElement('script');
+		ga.setAttribute('async', 'true');
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	/* ]]>*/
+</script>
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(
+	    ['_setAccount', 'UA-726094-1'],
+	    ['_setDomainName', '.habrahabr.ru'],
+	    ["_addOrganic", "mail.ru", "q"],
+	    ["_addOrganic","rambler.ru", "words"],
+	    ["_addOrganic","nigma.ru", "s"],
+	    ["_addOrganic","blogs.yandex.ru", "text"],
+	    ["_addOrganic","webalta.ru", "q"],
+	    ["_addOrganic","aport.ru", "r"],
+	    ["_addOrganic","akavita.by", "z"],
+	    ["_addOrganic","meta.ua", "q"],
+	    ["_addOrganic","bigmir.net", "q"],
+	    ["_addOrganic","tut.by", "query"],
+	    ["_addOrganic","all.by", "query"],
+	    ["_addOrganic","i.ua", "q"],
+	    ["_addOrganic","online.ua", "q"],
+	    ["_addOrganic","a.ua", "s"],
+	    ["_addOrganic","ukr.net", "search_query"],
+	    ["_addOrganic","search.com.ua", "q"],
+	    ["_addOrganic","search.ua", "query"],
+	    ["_addOrganic","poisk.ru", "text"],
+	    ["_addOrganic","km.ru", "sq"],
+	    ["_addOrganic","liveinternet.ru", "ask"],
+	    ["_addOrganic","gogo.ru", "q"],
+	    ["_addOrganic","gde.ru", "keywords"],
+	    ["_addOrganic","quintura.ru", "request"],
+	    ['_trackPageview']
+	);
+	document.documentElement.firstChild.appendChild(ga);
+</script>	
+		
+		
+	
+
+<div id="AutocompleteContainter_ae9e3" style="position: absolute; top: 141px; left: 710px; z-index: 9999; "><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_ae9e3" style="display: none; max-height: 400px; width: 300px; "></div></div></div><div id="AutocompleteContainter_58320" style="position: absolute; top: 0px; left: 0px; z-index: 9999; "><div class="autocomplete-w1"><div class="autocomplete" id="Autocomplete_58320" style="display: none; max-height: 400px; width: 300px; "></div></div></div><div id="tiptip_holder" style="max-width:auto;"><div id="tiptip_arrow"><div id="tiptip_arrow_inner"></div></div><div id="tiptip_content"></div></div></body></html>
